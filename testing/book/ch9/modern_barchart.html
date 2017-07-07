@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>An improved bar chart using svg elements</title>	
+	<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+	<style type="text/css">
+		/*No CSS yet*/
+	</style>
+		
+</head>
+	
+<body>
+	
+	<p>Click on this text to update the chart with new data values (once).</p>
+	
+	<script type="text/javascript">
+		
+		//Width and height of SVG
+		var w = 600;	
+		var h = 250;
+		
+		var barPadding = 1;
+		
+		var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+
+		//Creating an empty SVG element in which to place our improved bar graph
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+			
+		//This scale will help position the left/right positioning of the bars and labels along the x-axis
+		var xScale = d3.scale.ordinal()
+						.domain(d3.range(dataset.length)) //d3.range() will create a sequential string of numbers, starting from 0. 
+						.rangeRoundBands([0, w], 0.05); //.rangeBands() takes a high and low value and divides into even "bands" (or chunks)
+						//The first pair is the input domain and third value is the percentage of the bands which will be allocated for padding
+						//.rangeRoundBands() is a little better in that it will round output values to the nearest whole [pixel]
+
+		//Creating rectangles in the svg space
+		svg.selectAll("rect")	
+			.data(dataset)
+			.enter()
+			.append("rect")
+			//The following function places the x-coordinate at multiples of number of datapoints
+			.attr("x", function(d, i) {
+				return xScale(i); //This was changed
+			})
+			//The svg origin is actually at the top left corner (unlike the bottom left which we are accustomed to) so we use this function to flip the bars upside-down.
+			.attr("y", function(d) {
+				return h - (d * 4);
+			}) 	
+			//The width is dynamic and changes with the numbers of datapoints in the array. The width of the svg is evenly divided for each bar, then 1px is subtracted so that the bars have spaces in between them and don't merge into one block. 
+			.attr("width", xScale.rangeBand()) //This was changed from w / dataset.length - barPadding
+			.attr("height", function(d) {
+				return d * 4;
+			})
+			.attr("fill", function(d) {
+				return "rgb( 0, 0, " + (d * 10) + ")";
+			}); 
+		svg.selectAll("text")
+			.data(dataset)
+			.enter()
+			.append("text")
+			.text(function(d) {
+				return d;
+			})
+			.attr("text-anchor", "middle")
+			.attr("x", function(d, i) {
+				return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+			})
+			.attr("y", function(d) {
+				return h - (d * 4) + 14;
+			})
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "11px")
+			.attr("fill", "white");
+		
+		d3.select("p")
+			.on("click", function() {
+				//Do something upon being clicked. An event listener has been created. Someone that will respond when the paragraph happens to be clicked.
+				//Do something mundane and annoying on click.
+				//An event listener is an anonymous function that listens for a specific event on a specific element or elements. 
+				
+				//Adding new values for the dataset which will overwrite the old data when the paragraph is clicked
+				dataset = [11, 12, 15, 20, 18, 17, 16, 18, 23, 25,
+							5, 10, 13, 19, 21, 25, 22, 18, 15, 13]
+				
+				//Overwriting the visuals by rebinding the rectangles to the new data
+				svg.selectAll("rect")
+					.data(dataset)
+					.attr("y", function(d) {
+						return h - yScale(d); 
+					})
+					.attr("height", function(d) {
+						return yScale(d);
+					})
+					.attr("fill", function(d) {
+						return "rgb(0, 0, " + (d * 10) + ")";
+					});
+				});
+				
+				//Making sure that the labels change as well.
+				/*svg.selectAll("text")
+					.data(dataset)
+					.text(function(d) {
+						return d;
+					})
+					.attr("x", function(d, i) {
+						return xScale(i) + xScale.rangeBand() / 2;
+					})
+					.attr("y", function(d) {
+						return h - yScale(d) + 14;
+					});*/
+		
+	</script>
+</body>
+</html> 
