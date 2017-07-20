@@ -78,33 +78,48 @@
 				d3.select("p")
 					.on("click", function() {
 						
-						//Applying the new dataset of randomly generated numbers
-						var numValues = dataset.length; //Count the length of the original array(dataset)
-						dataset = []; //Giving an empty array to populated with the random data values
-						for (var i = 0; i < numValues; i++) { //For as long as the size of new dataset is smaller than the old dataset, add a new random number
-							var newNumber = Math.floor(Math.random() * maxValue); //The random is made into a variable and set to be between 0-24
-							dataset.push(newNumber); //Add the newly created number to the dataset
-						}
+						//Add one new value to the dataset
+						var maxValue = 25;
+						
+						var newNumber = Math.floor(Math.random() * maxValue); //New random integer (0 - 24) to be added
+						dataset.push(newNumber);	//Add the new number to the array
+						
+						
 						//Updating the scale domain so things don't get cut off!
+						xScale.domain(d3.range(dataset.length)); //Now the xScale must also be updated as well to accomodate the new bar
 						yScale.domain([0, d3.max(dataset)]);
 								
-						//Updating the rectangles with the new dataset which is being applied
-						svg.selectAll("rect")
-							.data(dataset)
-							.transition() //This lines tells D3 to make a graudual transition
-							.delay(function(d, i) { //How to long to wait after the event to activate the script. Can be a static number or staggered function
-								return i / dataset.length * 100;
-							})
-							.duration(500) //How long the transition lasts
-							.ease("linear") //You can choose the type of transition, the default is "cubic in-and-out"
+						//Select
+						var bars = svg.selectAll("rect")
+							.data(dataset);
+							
+						//Enter
+						bars.enter()
+							.append("rect")
+							.attr("x", w)
 							.attr("y", function(d) {
 								return h - yScale(d);
 							})
+							.attr("width", xScale.rangeBand())
 							.attr("height", function(d) {
 								return yScale(d);
 							})
 							.attr("fill", function(d) {
-								return "rgb(0, 0, " + (d * 10) + ")"; 
+								return "rgb(0, 0, " + (d * 10) + ")";
+							});
+						
+						//Update
+						bars.transition()
+							.duration(500)
+							.attr("x", function(d, i) {
+								return xScale(i);
+							})
+							.attr("y", function(d) {
+								return h - yScale(d);
+							})
+							.attr("width", xScale.rangeBand())
+							.attr("height", function(d) {
+								return yScale(d);
 							});
 						
 						//Updating the lables in correlation with the new data and rectangles

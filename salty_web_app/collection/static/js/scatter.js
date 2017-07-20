@@ -5,10 +5,12 @@ var margin = { top: 50, right: 900, bottom: 50, left: 50 },
     height = outerHeight - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
-    .range([0, width]).nice();
+    .range([0, width])
+    .nice();
 
 var y = d3.scale.linear()
-    .range([height, 0]).nice();
+    .range([height, 0])
+    .nice();
 
 var xCat = "Density (kg/m Experimental)",
     yCat = "Density (kg/m Prediction)",
