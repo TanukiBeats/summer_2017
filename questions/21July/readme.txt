@@ -11,3 +11,5 @@ Anyways, I took the parts of simplePanAndZoom.html and tried to put them into pa
 I added in lines 75-76 and 106-109.
 
 I'm also not sure where in simplePanAndZoom.html gives the panning funcitonality.
+
+Anyways I checked the functions and they match the official references.
