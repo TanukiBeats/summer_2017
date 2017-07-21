@@ -32,13 +32,13 @@
 			var padding = 30;
 			
 			//Dynamic, random dataset
-			var dataset = [];											//Initialize empty array
-			var numDataPoints = 50;										//Number of dummy data points to create
-			var maxRange = Math.random() * 1000;						//Max range of new values
-			for (var i = 0; i < numDataPoints; i++) {					//Loop numDataPoints times
-				var newNumber1 = Math.floor(Math.random() * maxRange);	//New random integer
-				var newNumber2 = Math.floor(Math.random() * maxRange);	//New random integer
-				dataset.push([newNumber1, newNumber2]);					//Add new number to array
+			var dataset = [];											
+			var numDataPoints = 50;										
+			var maxRange = Math.random() * 1000;						
+			for (var i = 0; i < numDataPoints; i++) {					
+				var newNumber1 = Math.floor(Math.random() * maxRange);	
+				var newNumber2 = Math.floor(Math.random() * maxRange);	
+				dataset.push([newNumber1, newNumber2]);					
 			}
 
 			//Create scale functions
@@ -72,9 +72,7 @@
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h)
-						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    //This right here is the function for zooming!!!
+						.append("g") //This line and following one were added for the zoom ability.
 						.call(d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1, 8]).on("zoom", zoom));
 
 			//Create circles
@@ -104,8 +102,11 @@
 				.attr("class", "y axis")
 				.attr("transform", "translate(" + padding + ",0)")
 				.call(yAxis);
-
-
+				
+			//Defining the function for zooming
+			function zoom()
+				svg.select(".x.axis").call(xAxis);
+				svg.select(".y.axis").call(yAxis);
 
 			//On click, update with new data			
 			d3.select("p")
@@ -129,28 +130,12 @@
 					svg.selectAll("circle")
 					   .data(dataset)
 					   .transition()
-					   .duration(1000)
-					   .each("start", function() {
-							d3.select(this)
-								//.transition() This will result in the circles fading between black and pink properly. But, this new transition
-								// interrupts the old transition of the circles moving and the circles change color but don't move. Each element can
-								// only have one transition applied at a time.
-								.attr("fill", "magenta")
-								.attr("r", 5);
-						})		
+					   .duration(1000)	
 					   .attr("cx", function(d) {
 					   		return xScale(d[0]);
 					   })
 					   .attr("cy", function(d) {
 					   		return yScale(d[1]);
-					   })
-					   //By the time .end() is called, the transition should have finished, so it is now safe to call a new transition.
-					   .each("end", function() {
-					   		d3.select(this)
-					   			.transition()
-					   			.duration(1000)
-					   			.attr("fill", "black")
-					   			.attr("r", 2);
 					   });
 
 					//Update X axis
