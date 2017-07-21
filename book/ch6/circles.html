@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Colorful Circles</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			/*No CSS yet*/
+		</style>
+		
+	</head>
+	
+	<body>
+		<script type="text/javascript">
+
+		//Width and height of the svg area (not the circles)	
+		var w = 500;
+		var h = 50;
+	
+		//Data
+		var dataset = [ 5, 10, 15, 20, 25 ];
+
+		//Creating the svg element (not the circle, just the area in which the circles are placed)
+		var svg = d3.select("body") 
+		//Makes the definition of the svg a variable so it is easier to reference later. They we select the body DOM.
+			.append("svg") //Adding the svg element to the end of the body DOM
+			.attr("width", w) //Defining the width of the svg with the predefined variable
+			.attr("height", h); //Defining the height of the svg with the predefined variable
+		
+		var circles = svg.selectAll("cicle") 
+		//Begining the defintion of the circles. We select the cicles which are to be made (they don't exist yet, we are just specifying that the following attributes will be applied to circles, not other things like ellipses)
+			.data(dataset) //Parsing the array
+			.enter() //Binds the data to empty placeholder elements which are created in the same step 
+			.append("circle"); 
+		//Adds to circles to the empty placeholder elements which also means the data is now bound to the cicles which were just created
+
+		circles.attr("cx", function(d, i) {
+			return (i * 50) + 25;
+		})
+		 //Adds the x-coordinate of the function. "i" is an arbitrarily named and automatically populated variable. It must be defined along with "d", even if "d" is not used. "i" is a counter for the dataset. "i" begins at 0 and in our case, ends at 4 for the last loop. The x-coordinate is therefore, [25, 75, 125, 175, 200].
+			.attr("cy", h/2) //The y-coordinate is fixed as half the height of the svg
+			.attr("r", function(d) {
+				return d;
+			}) //The radius is defined by calling the data value. 
+			.attr("fill", "yellow") //The cicles are colored yellow
+			.attr("stroke", "orange") //The cicles are given an orange border
+			.attr("stroke-width", function(d) { 
+				return d/2;
+			}); //The orange border is given a thickness that varies as being half of the radius of the given circle.
+		</script> 

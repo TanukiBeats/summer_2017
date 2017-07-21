@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Drawing divs, spaced out.</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			
+			.bar {
+				display: inline-block;
+				width: 20px;
+				height: 75px; /*We can override this later */
+				margin-right: 2px;
+				background-color: teal;
+			}
+		
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+		
+			var dataset = [ 25, 7, 5, 26, 11, 8, 25, 14, 23, 19, 14, 11, 22, 29, 11, 13, 12, 17, 18, 10, 24, 18, 25, 9, 3 ];
+			
+			d3.select("body").selectAll("div")
+				.data(dataset)
+				.enter()
+				.append("div")
+				.attr("class", "bar")
+				.style("height", function(d) {
+					var barHeight = d * 5;
+					return barHeight + "px";
+				});	
+			
+			svg.selectAll('text')
+				.data(dataset)
+				.enter()
+				.append('text')
+				.text(function(d) {
+					return d;
+				})
+				.attr('x', function(d, i) {
+					return i * (w / dataset.length);
+				})
+				.attr('y', function(d) {
+					return h - (d * 4);
+				});
+	
+		</script>
+	</body>
+</html>

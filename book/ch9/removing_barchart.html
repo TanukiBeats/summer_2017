@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: A bar chart whose data updates with new data (lables, too)</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			/*No style rules here yet!*/
+		</style>
+	</head>
+	<body>
+		
+		<p>Click on this text to remove a datavalue</p>
+		
+		<script type="text/javascript">
+			
+			//Setting the width and height of the SVG element
+			var w = 600;
+			var h = 250;
+			var maxValue = 100;
+			
+			var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+							11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+			
+			var xScale = d3.scale.ordinal()
+							.domain(d3.range(dataset.length))
+							.rangeRoundBands([0, w], 0.05);
+							
+			var yScale = d3.scale.linear()
+							.domain([0, d3.max(dataset)])
+							.range([0, h]);
+			
+			//Creating the SVG element where the graph will be placed
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+			
+			//Creating the rectangle elements whcih will become the bars of the graph
+			svg.selectAll("rect")
+				.data(dataset)
+				.enter()
+				.append("rect")
+				.attr("x", function(d, i) {
+					return xScale(i); //This part is a little confusing to me.
+				})
+				.attr("y", function(d) {
+					return h - yScale(d); //This part too.
+				})
+				.attr("width", xScale.rangeBand())
+				.attr("height", function(d) {
+					return yScale(d);
+				})
+				.attr("fill", function(d) {
+					return "rgb(0, 0, " + (d * 10) + ")";
+				});
+				
+				//Creating the lables for the bars
+				svg.selectAll("text")
+					.data(dataset)
+					.enter()
+					.append("text")
+					.text(function(d) {
+						return d;
+					})
+					.attr("text-anchor", "middle")
+					.attr("x", function(d, i) {
+						return xScale(i) + xScale.rangeBand() / 2;
+					})
+					.attr("y", function(d) {
+						return h - yScale(d) + 14;
+					})
+					.attr("font-family", "sans-serif")
+					.attr("font-size", "11px")
+					.attr("fill", "white");
+					
+				//Overwriting the data upon the click of the paragraph (ie. creating the event listener)
+				d3.select("p")
+					.on("click", function() {
+						
+						//Add one new value to the dataset
+						dataset.shift();	//Add the new number to the array
+						
+						
+						//Updating the scale domain so things don't get cut off!
+						xScale.domain(d3.range(dataset.length)); //Now the xScale must also be updated as well to accomodate the new bar
+						yScale.domain([0, d3.max(dataset)]);
+								
+						//Select
+						var bars = svg.selectAll("rect")
+							.data(dataset);
+							
+						//Exit
+						bars.exit()
+							.transition()
+							.duration(500)
+							.attr("x", w)
+							.remove();
+						
+						//Update
+						bars.transition()
+							.duration(500)
+							.attr("x", function(d, i) {
+								return xScale(i);
+							})
+							.attr("y", function(d) {
+								return h - yScale(d);
+							})
+							.attr("width", xScale.rangeBand())
+							.attr("height", function(d) {
+								return yScale(d);
+							});
+						
+						//Updating the lables in correlation with the new data and rectangles
+						svg.selectAll("text")
+							.data(dataset)
+							.transition()
+							.delay(function(d, i) {
+								return i / dataset.length * 100;
+							})
+							.duration(500)
+							.ease("linear")
+							.text(function(d) {
+								return d;
+							})
+							.attr("x", function(d, i) {
+								return xScale(i) + xScale.rangeBand() / 2;
+							})
+							.attr("y", function(d) {
+								return h - yScale(d) + 14;
+							});
+						//Extra exercise for removing the labels. They just get pushed over and don't actually get removed.
+						});
+							
+				</script>
+		</body>
+</html>
