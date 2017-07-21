@@ -1,0 +1,132 @@
+I need to do some more research into what is happening here. How is the .csv being called? What is with all the arrays?
+d3.csv("cereal.csv", function(data) {
+	data.forEach(function(d) {
+		d.Calories = +d.Calories;
+		d.Carbs = +d.Carbs;
+		d["Cups per Serving"] = +d["Cups per Serving"];
+		d["Dietary Fiber"] = +d["Dietary Fiber"];
+		d["Display Shelf"] = +d["Display Shelf"];
+		d.Fat = +d.Fat;
+		d.Potassium = +d.Potassium;
+		d["Protein (g)"] = +d["Protein (g)"];
+		d["Serving Size Weight"] = +d["Serving Size Weight"];
+		d.Sodium = +d.Sodium;
+		d.Sugars = +d.Sugars;
+		d["Vitamens and Minerals"] = +d["Vitamens and Minerals"];
+	});
+	
+//I really need to focus on what is happening with the d[thing] and the lines which include the "?"
+var xMax = d3.max(data, function(d) { return d[xCat]; }) * 1.05,
+	yMin = d3.min(data, function(d) { return d[xCat]; }), 
+	xMin = xMin > 0 ? 0 : xMin,
+	yMax = d3.max(data, function(d) { return d[yCat]; }) * 1.05,
+	yMin = d3.min(data, function(d) { return d[yCat]; }),
+	yMin = yMin > 0 ? 0 : yMin;
+	
+//I literally have no idea
+var color = d3.scale.category10();
+
+//I'm not sure if the tooltip is actually being made right here
+var tip = d3.tip()
+	.attr("class", "d3-tip")
+	.offset([-10, 0])
+	.html(function(d) {
+		return xCat + ": " + d[xCat] + "<br>" + yCat + ": " + d[yCat];
+	});
+	
+//Similar as above. I've never worked with zooming so I don't know what exactly is being done here with the zoom
+var zoomBeh = d3.behavior.zoom()
+	.x(x)
+	.y(y)
+	.scaleExtent([0, 500])
+	.on("zoom", zoom);
+
+//I think that the graph is being created here, but I'm not too sure. I think just the class is being called?
+var svg = d3.select("#scatter")
+	.append("svg")
+		.attr("width", outerWidth)
+		.attr("height", outerHeight)
+	.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+		.call(zoomBeh);
+
+//Why are they just calling the variable?
+svg.call(tip);
+
+//Something is being created here, but I'm not totally sure what
+svg.append('g")
+	.classed("x axis" ,true)
+	.attr("transform", "translate(0," + height + ")")
+	.call(xAxis)
+	.append("text")
+	.classed("label", true)
+	.attr("x", width)
+	.attr("y", margin.bottom - 10)
+	.style("text-anchor", "end")
+	.text(xCat);
+	
+svg.append("g")
+	.classed("y axis", true)
+	.call(yAxis)
+	.append("text")
+	.classed("label", true)
+	.attr("transform", "rotate(-90)")
+	.attr("y", -margin.left)
+	.attr("dy", ".71em")
+	.style("text-anchor", "end")
+	.text(yCat);
+	
+//Not clear on what the purpose of making this variable is
+var objects = svg.append("svg")
+	.classed("objects", true)
+	.attr("width", width)
+	.attr("height", height);
+	
+//I think the graph lines are being created here, but I'm not sure why it has to happen twice
+object.append("svg:line")
+	.classed("axisLine hAxisLine", true)
+	.attr("x1", 0)
+	.attr("y1", 0)
+	.attr("x2", 0)
+	.attr("y2", 0)
+	.attr("transform", "translate(0," + height + ")");
+objects.append("svg:line")
+	.classed("axisLine vAxisLine", true)
+	.attr("x1", 0)
+	.attr("y1", 0)
+	.attr("x2", 0)
+	.attr("y2", height);
+	
+//I actually have no idea what this is 
+d3.select("input").on("click", change);
+
+//Not sure what this is
+function change() {
+	xCat = "Carbs"
+	xMax = d3.max(data, function(d) { return d[xCat]; });
+	xMin = d3.min(data, function(d) { return d[xCat]; });
+	
+	zoomBeh.x(x.domain([xMin, xMax])).y(y.domain([yMin, yMax]));
+	
+	var svg = d3.select("#scatter").transition;
+	
+	svg.select(.x.axis).duration(750).call(xAxis).select(".label").text(xCat);
+	
+	objects.selectAll(".dot").transition().duration(1000).attr("transform", transform);
+}
+
+//I need to look more into the zooming function and how it works in d3
+function zoom() {
+	svg.select(".x.axis").call(xAxis);
+	svg.select(".y.axis").call(yAxis);
+	
+	svg.selectAll(".dot")
+		.attr("transform", transform);
+	}
+	
+	function transform(d) {
+		return "translate(" + x(d[xCat]) + "," + y(d[yCat]) + ")";
+	}
+});
+	
+	

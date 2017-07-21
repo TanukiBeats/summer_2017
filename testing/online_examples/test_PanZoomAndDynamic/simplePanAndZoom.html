@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Zoom + Pan</title>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<style>
+
+svg {
+  font: 10px sans-serif;
+  shape-rendering: crispEdges;
+}
+
+rect {
+  fill: #ddd;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #fff;
+}
+
+</style>
+<body>
+<script>
+
+//Defining attributes of the graph itself such as the margins from the edges of the SVG and the width and height.
+var margin = {top: 0, right: 0, bottom: 12, left: 24},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+//Defining x-axis scale
+//I should change the domains to variables that actively search for the max and min
+var x = d3.scale.linear()
+    .domain([-width / 2, width / 2])
+    .range([0, width]);
+
+//Defining the y-axis scale
+//I should change the domains to variables the actively search for the max and min
+var y = d3.scale.linear()
+    .domain([-height / 2, height / 2])
+    .range([height, 0]);
+
+//Defining attributes for the x-axis
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .tickSize(-height);
+
+//Defining traits for the y-axis
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(5)
+    .tickSize(-width);
+
+//Creating the SVG in which the graph will be placed
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+//Calling everything in the SVG as a group so that they will all move together.
+//This is to make room for the y-axis.
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //This right here is the function for zooming!!!
+    //First the zooming function is called, then the scales for adjusting are defined.
+    //The bracketed numbers are how much you can zoom in and out
+    //Finally an event listener is created so the graph knows when to zoom. In this case, upon a mouse zoom.
+    .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom));
+
+//Creating the rectangle which is the graph
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+//Creating the x-axis. It is given a class from the CSS, moved to the correct locations
+//Then the characteristics defined above are finally called
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+//Same as above, but for the creation of the y-axis
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+//Defining the function for zooming, where you tell the axes to change with the zooming.
+function zoom() {
+  svg.select(".x.axis").call(xAxis);
+  svg.select(".y.axis").call(yAxis);
+}
+
+</script>

@@ -27,8 +27,8 @@
 		<script type="text/javascript">
 
 			//Width and height
-			var w = 500;
-			var h = 300;
+			var w = 900;
+			var h = 600;
 			var padding = 30;
 			
 			//Dynamic, random dataset
@@ -49,6 +49,11 @@
 			var yScale = d3.scale.linear()
 								 .domain([0, d3.max(dataset, function(d) { return d[1]; })])
 								 .range([h - padding, padding]);
+								 
+			function zoom() {
+  						svg.select(".xScale.axis").call(xAxis);
+  						svg.select(".yScale.axis").call(yAxis);
+			}
 
 			//Define X axis
 			var xAxis = d3.svg.axis()
@@ -66,7 +71,11 @@
 			var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
-						.attr("height", h);
+						.attr("height", h)
+						.append("g")
+						.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    //This right here is the function for zooming!!!
+						.call(d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1, 8]).on("zoom", zoom));
 
 			//Create circles
 			svg.append("g")
@@ -164,8 +173,10 @@
 						.attr("y", padding)
 						.attr("width", w - padding * 3)
 						.attr("height", h - padding * 2)
-
-				});
+					});
+					
+					
+				
 
 
 		</script>
