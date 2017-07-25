@@ -1,0 +1,31 @@
+//Why are only negative numbers and 0 allowed for the minimum values?
+	xMin = xMin > 0 ? 0 : xMin,
+	yMin = yMin > 0 ? 0 : yMin;
+	
+//This is part of the tooltip being made, but I'm not sure of the exact purpose
+.html(function(d) {
+		return xCat + ": " + d[xCat] + "<br>" + yCat + ": " + d[yCat];
+	});
+	
+//The axes are having their traits defined here, but I'm not sure how the CSS classes are being called.
+//I can't find the classes, which are referred to, in the CSS file. 
+svg.append("g")
+	.classed("x axis" ,true)
+svg.append("g")
+	.classed("y axis", true)
+
+//How does this function work?
+function zoom() {
+	svg.select(".x.axis").call(xAxis);
+	svg.select(".y.axis").call(yAxis);
+	
+	svg.selectAll(".dot")
+		.attr("transform", transform);
+	}
+	
+	function transform(d) {
+		return "translate(" + x(d[xCat]) + "," + y(d[yCat]) + ")";
+	}
+});
+	
+	
