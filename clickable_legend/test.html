@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 nest examples</title>
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Tienne' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            font-family: 'Tienne', serif;
+            font-size: 12px;
+        }
+    </style>
+    
+</head>
+<body>
+
+<textarea id="ex1" rows="15" cols="90"></textarea>
+
+<div id="ex10">
+
+</div>
+
+
+<script>
+    d3.csv("./d3_web_data.csv", function(d3_web_data){
+
+        var nested_data = d3.nest()
+                .key(function(d)  { return d["Salt Name"]; })
+                .entries(d3_web_data);
+
+
+        $("#ex1").html(JSON.stringify(nested_data, null, 3));
+
+        list.selectAll("option")
+                .data(nested_data)
+                .enter()
+                .append("option")
+                .attr("value", function(d) {return d.key;})
+                .text(function(d) {
+                    return d.key; });
+    });
+
+</script>
+</body>
+</html>
