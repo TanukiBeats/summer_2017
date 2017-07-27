@@ -28,6 +28,7 @@
 
         var nested_data = d3.nest()
                 .key(function(d)  { return d["Salt Name"]; })
+                .rollup(function(v) { return v.length; })
                 .entries(d3_web_data);
 
 
@@ -41,7 +42,6 @@
                 .text(function(d) {
                     return d.key; });
     });
-
 </script>
 </body>
 </html>
