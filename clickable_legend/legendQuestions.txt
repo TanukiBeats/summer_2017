@@ -1,0 +1,46 @@
+Stuff to look at reagrding the different colored data points for the different salts:
+
+//Where "Salt Name" is one of the categories in the .csv file
+colorCat = "Salt Name";
+
+//Creating the scale for the color
+var color = d3.scale.category10()
+
+//When creating the data point dots that actually show up on the graph
+var dot = objects.selectAll(".dot")
+	.data(data)
+	.enter().append("circle")
+	.classed("dot", true)
+	.attr("r", function(d) { return 6 * 0.1 sqrt(d[rCat] / Math.PI); })
+	.attr("transform", transform)
+	.style("fill", function(d) {return color(d[colorCat]); })
+	.attr("data-species", function(d) { return d[colorCat]; })
+	.on("mouseover", tip.show)
+	.on("mouseout", tip.hide);
+	
+Some questions to ask and things to think about:
+1. Are the colors assigned to the "Salt Names" categories random? Just based on what the computer chooses when applying color()?
+2. The color is filled by using a function to assign a state, I could use the same concept to apply the classes to the datapoints.
+	This might work better than directly applying classes to the classes. (Would that be the same concept as binding the data?)
+3. Should I use an ordinal scale to create the classes? The don't need fancy names or anything, just to be different.
+4. Essentially I need to find a way to separate out the different colored groups.
+
+Prototype:
+
+//Appending the legend
+var legend = svg.selectAl(".legend")
+	.data(color.domain())
+	.etner().append("g")
+	.classed("legend", true)
+	.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+//Appending the colored dots to the legend
+legend.append("circle")
+	.attr("r", 3.5)
+	.attr("cx", width + 20)
+	.attr("fill", color)
+	
+//Appending the text (with the name of the salt) to the legend
+	.attr("x", width + 46)
+	.attr("dy", ".35em")
+	.text(function(d) { return d; });
